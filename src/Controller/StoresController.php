@@ -17,7 +17,7 @@ class StoresController extends AppController
    */
   public function index()
   {
-    $stores = $this->paginate($this->Stores);
+    $stores = $this->Stores->find('all')->contain(['Addresses'])->toList();
 
     $this->set(compact('stores'));
   }

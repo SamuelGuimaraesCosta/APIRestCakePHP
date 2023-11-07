@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\Validation\Validator;
 
 /**
@@ -40,6 +40,10 @@ class StoresTable extends Table
     $this->setTable('stores');
     $this->setDisplayField('name');
     $this->setPrimaryKey('id');
+    $this->hasMany('Addresses', [
+      'foreignKey' => 'foreign_id',
+      'dependent' => true,
+    ]);
   }
 
   /**
@@ -53,9 +57,45 @@ class StoresTable extends Table
     $validator
       ->scalar('name')
       ->maxLength('name', 200)
-      ->requirePresence('name', 'create')
-      ->notEmptyString('name');
+      ->requirePresence('name')
+      ->notEmptyString('name', 'O nome é obrigatório')
+      ->add('name', 'unique', [
+        'rule' => 'validateUnique',
+        'provider' => 'table',
+        'message' => 'Nome em uso',
+      ]);
 
     return $validator;
+  }
+
+  /**
+   * Summary of buildRules
+   * @param \Cake\ORM\RulesChecker $rules
+   * @return RulesChecker
+   */
+  public function buildRules(RulesChecker $rules): RulesChecker
+  {
+    $rules->add($rules->isUnique(['name'], 'Nome em uso'));
+    $rules->addDelete(function ($entity, $options) {
+      return true;
+    }, 'deleteAddress');
+
+    return $rules;
+  }
+
+  public function beforeSave($event, $entity, $options)
+  {
+    if ($entity->isDirty('name')) {
+      if ($entity->addresses) {
+        $addressesTable = TableRegistry::getTableLocator()->get('Addresses');
+
+        $previousAddressId = $entity->addresses->id;
+
+        if ($previousAddressId) {
+          $previousAddress = $addressesTable->get($previousAddressId);
+          $addressesTable->delete($previousAddress);
+        }
+      }
+    }
   }
 }

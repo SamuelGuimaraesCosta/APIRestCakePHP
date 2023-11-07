@@ -25,6 +25,16 @@ class AddressesController extends AppController
     $addresses = $this->Addresses->find('all', [
       'contain' => 'Stores',
     ]);
+
+    foreach ($addresses as $address) {
+      $postalCode = $address->postal_code;
+      if (strlen($postalCode) === 8) {
+        $address->postal_code_masked = substr($postalCode, 0, 5) . '-' . substr($postalCode, 5);
+      } else {
+        $address->postal_code_masked = $postalCode;
+      }
+    }
+    
     $addresses = $this->paginate($this->Addresses);
 
     $this->set(compact('addresses'));
