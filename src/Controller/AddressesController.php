@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\ORM\TableRegistry;
+
 /**
  * Addresses Controller
  *
@@ -17,6 +19,12 @@ class AddressesController extends AppController
    */
   public function index()
   {
+    $storesTable = TableRegistry::getTableLocator()->get('Stores');
+    $stores = $storesTable->find('all')->toList();
+
+    $addresses = $this->Addresses->find('all', [
+      'contain' => 'Stores',
+    ]);
     $addresses = $this->paginate($this->Addresses);
 
     $this->set(compact('addresses'));
