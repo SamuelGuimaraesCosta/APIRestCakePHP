@@ -1,5 +1,4 @@
 <h1>Lista de Lojas e seus respectivos Endereços</h1>
-TESTE
 
 <?php foreach ($addresses as $address): ?>
     <h2>Loja: <?= h($address->store->name) ?></h2>
