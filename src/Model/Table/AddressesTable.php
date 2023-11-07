@@ -41,9 +41,35 @@ class AddressesTable extends Table
     $this->setDisplayField('foreign_table');
     $this->setPrimaryKey('id');
     $this->belongsTo('Stores', [
-      'foreignKey' => 'foreign_id',
-      'joinType' => 'INNER',
+      'foreignKey' => 'foreign_id'
     ]);
+  }
+
+  public function validatePostalCode($value, array $context)
+  {
+    $postalCode = preg_replace('/\D/', '', $value); // Remove caracteres não numéricos
+
+    $httpClient = new Client();
+    $api1Response = $httpClient->get("https://viacep.com.br/ws/{$postalCode}/json/");
+
+    if ($api1Response->isOk()) {
+      $data = $api1Response->getJson();
+      if (!empty($data) && isset($data['logradouro'], $data['bairro'], $data['localidade'], $data['uf'])) {
+        return true; // Validação bem-sucedida
+      }
+    }
+
+    // Caso a primeira API não retorne resultados satisfatórios, tente a segunda API (Via CEP)
+    $api2Response = $httpClient->get("https://viacep.com.br/ws/{$postalCode}/json/");
+
+    if ($api2Response->isOk()) {
+      $data = $api2Response->getJson();
+      if (!empty($data) && isset($data['logradouro'], $data['bairro'], $data['localidade'], $data['uf'])) {
+        return true; // Validação bem-sucedida
+      }
+    }
+
+    return false; // Validação falhou
   }
 
   /**
@@ -109,7 +135,7 @@ class AddressesTable extends Table
       ->requirePresence('postal_code')
       ->notEmptyString('postal_code', 'CEP é obrigatório')
       ->add('postal_code', 'custom', [
-        'rule' => 'validatePostalCode',
+        'rule' => [$this, 'validatePostalCode'],
         // Implemente a função para consultar informações do CEP
         'message' => 'CEP não encontrado',
       ]);
@@ -122,43 +148,6 @@ class AddressesTable extends Table
       ->allowEmptyString('complement');
 
     return $validator;
-  }
-
-  public function validatePostalCode($value, array $context)
-  {
-    $postalCode = preg_replace('/\D/', '', $value); // Remove caracteres não numéricos
-
-    $httpClient = new Client();
-    $api1Response = $httpClient->get("https://cep.la/{$postalCode}?json&sua-chave-de-acesso");
-
-    if ($api1Response->isOk()) {
-      $data = $api1Response->getJson();
-      if (!empty($data) && isset($data['logradouro'], $data['bairro'], $data['localidade'], $data['uf'])) {
-        $this->address->street = $data['logradouro'];
-        $this->address->sublocality = $data['bairro'];
-        $this->address->city = $data['localidade'];
-        $this->address->state = $data['uf'];
-
-        return true; // Validação bem-sucedida
-      }
-    }
-
-    // Caso a primeira API não retorne resultados satisfatórios, tente a segunda API (Via CEP)
-    $api2Response = $httpClient->get("https://viacep.com.br/ws/{$postalCode}/json/");
-
-    if ($api2Response->isOk()) {
-      $data = $api2Response->getJson();
-      if (!empty($data) && isset($data['logradouro'], $data['bairro'], $data['localidade'], $data['uf'])) {
-        $this->address->street = $data['logradouro'];
-        $this->address->sublocality = $data['bairro'];
-        $this->address->city = $data['localidade'];
-        $this->address->state = $data['uf'];
-
-        return true; // Validação bem-sucedida
-      }
-    }
-
-    return false; // Validação falhou
   }
 
   /**

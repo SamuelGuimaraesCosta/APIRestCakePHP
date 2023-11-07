@@ -26,18 +26,22 @@ class AddressesController extends AppController
       'contain' => 'Stores',
     ]);
 
+    $groupedAddresses = [];
     foreach ($addresses as $address) {
+      $storeName = $address->store->name;
+      if (!isset($groupedAddresses[$storeName])) {
+        $groupedAddresses[$storeName] = [];
+      }
       $postalCode = $address->postal_code;
       if (strlen($postalCode) === 8) {
         $address->postal_code_masked = substr($postalCode, 0, 5) . '-' . substr($postalCode, 5);
       } else {
         $address->postal_code_masked = $postalCode;
       }
+      $groupedAddresses[$storeName][] = $address;
     }
-    
-    $addresses = $this->paginate($this->Addresses);
 
-    $this->set(compact('addresses'));
+    $this->set(compact('groupedAddresses'));
   }
 
   /**

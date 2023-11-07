@@ -40,9 +40,8 @@ class StoresTable extends Table
     $this->setTable('stores');
     $this->setDisplayField('name');
     $this->setPrimaryKey('id');
-    $this->hasMany('Addresses', [
+    $this->hasOne('Addresses', [
       'foreignKey' => 'foreign_id',
-      'dependent' => true,
     ]);
   }
 
@@ -81,21 +80,5 @@ class StoresTable extends Table
     }, 'deleteAddress');
 
     return $rules;
-  }
-
-  public function beforeSave($event, $entity, $options)
-  {
-    if ($entity->isDirty('name')) {
-      if ($entity->addresses) {
-        $addressesTable = TableRegistry::getTableLocator()->get('Addresses');
-
-        $previousAddressId = $entity->addresses->id;
-
-        if ($previousAddressId) {
-          $previousAddress = $addressesTable->get($previousAddressId);
-          $addressesTable->delete($previousAddress);
-        }
-      }
-    }
   }
 }

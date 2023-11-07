@@ -84,14 +84,6 @@ return function (RouteBuilder $routes): void {
       ->setPatterns(['id' => '\d+'])
       ->setPass(['id']);
 
-    // Rota para ação add (criação) em StoresController
-    $builder->connect('/stores/add', ['controller' => 'Stores', 'action' => 'add']);
-
-    // Rota para ação edit (edição) em StoresController com um parâmetro {id}
-    $builder->connect('/stores/edit/:id', ['controller' => 'Stores', 'action' => 'edit'])
-      ->setPatterns(['id' => '\d+'])
-      ->setPass(['id']);
-
     // Rota para ação delete (exclusão) em StoresController com um parâmetro {id}
     $builder->connect('/stores/delete/:id', ['controller' => 'Stores', 'action' => 'delete'])
       ->setPatterns(['id' => '\d+'])
@@ -99,17 +91,13 @@ return function (RouteBuilder $routes): void {
 
     // Rotas para o controller Addresses com ações semelhantes
     $builder->connect('/addresses', ['controller' => 'Addresses', 'action' => 'index']);
-    $builder->connect('/addresses/view/:id', ['controller' => 'Addresses', 'action' => 'view'])
-      ->setPatterns(['id' => '\d+'])
-      ->setPass(['id']);
-    $builder->connect('/addresses/add', ['controller' => 'Addresses', 'action' => 'add']);
-    $builder->connect('/addresses/edit/:id', ['controller' => 'Addresses', 'action' => 'edit'])
-      ->setPatterns(['id' => '\d+'])
-      ->setPass(['id']);
-    $builder->connect('/addresses/delete/:id', ['controller' => 'Addresses', 'action' => 'delete'])
-      ->setPatterns(['id' => '\d+'])
-      ->setPass(['id']);
 
+    $builder->connect('/stores/addwithaddress', ['controller' => 'Stores', 'action' => 'addWithAddress']);
+
+    $builder->connect('/stores/updatewithaddress/:id', ['controller' => 'Stores', 'action' => 'updateWithAddress'])
+      ->setMethods(['POST'])
+      ->setPatterns(['id' => '\d+'])
+      ->setPass(['id']);
 
     $builder->fallbacks();
   });
