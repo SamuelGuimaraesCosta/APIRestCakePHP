@@ -19,7 +19,7 @@ use Cake\ORM\Entity;
  * @property string $street_number
  * @property string $complement
  */
-class Addres extends Entity
+class Address extends Entity
 {
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().

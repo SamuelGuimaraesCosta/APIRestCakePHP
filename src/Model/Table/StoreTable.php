@@ -27,35 +27,35 @@ use Cake\Validation\Validator;
  */
 class StoreTable extends Table
 {
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
-    public function initialize(array $config): void
-    {
-        parent::initialize($config);
+  /**
+   * Initialize method
+   *
+   * @param array $config The configuration for the Table.
+   * @return void
+   */
+  public function initialize(array $config): void
+  {
+    parent::initialize($config);
 
-        $this->setTable('stores');
-        $this->setDisplayField('name');
-        $this->setPrimaryKey('id');
-    }
+    $this->setTable('stores');
+    $this->setDisplayField('name');
+    $this->setPrimaryKey('id');
+  }
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator): Validator
-    {
-        $validator
-            ->scalar('name')
-            ->maxLength('name', 200)
-            ->requirePresence('name', 'create')
-            ->notEmptyString('name');
+  /**
+   * Default validation rules.
+   *
+   * @param \Cake\Validation\Validator $validator Validator instance.
+   * @return \Cake\Validation\Validator
+   */
+  public function validationDefault(Validator $validator): Validator
+  {
+    $validator
+      ->scalar('name')
+      ->maxLength('name', 200)
+      ->requirePresence('name', 'create')
+      ->notEmptyString('name');
 
-        return $validator;
-    }
+    return $validator;
+  }
 }
