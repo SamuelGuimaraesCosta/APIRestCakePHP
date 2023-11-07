@@ -6,7 +6,7 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Addres Entity
+ * Address Entity
  *
  * @property int $id
  * @property string $foreign_table

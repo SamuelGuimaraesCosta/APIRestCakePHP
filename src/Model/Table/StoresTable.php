@@ -9,7 +9,7 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * Store Model
+ * Stores Model
  *
  * @method \App\Model\Entity\Store newEmptyEntity()
  * @method \App\Model\Entity\Store newEntity(array $data, array $options = [])
@@ -25,37 +25,37 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\Store[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\Store[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
  */
-class StoreTable extends Table
+class StoresTable extends Table
 {
-  /**
-   * Initialize method
-   *
-   * @param array $config The configuration for the Table.
-   * @return void
-   */
-  public function initialize(array $config): void
-  {
-    parent::initialize($config);
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config): void
+    {
+        parent::initialize($config);
 
-    $this->setTable('stores');
-    $this->setDisplayField('name');
-    $this->setPrimaryKey('id');
-  }
+        $this->setTable('stores');
+        $this->setDisplayField('name');
+        $this->setPrimaryKey('id');
+    }
 
-  /**
-   * Default validation rules.
-   *
-   * @param \Cake\Validation\Validator $validator Validator instance.
-   * @return \Cake\Validation\Validator
-   */
-  public function validationDefault(Validator $validator): Validator
-  {
-    $validator
-      ->scalar('name')
-      ->maxLength('name', 200)
-      ->requirePresence('name', 'create')
-      ->notEmptyString('name');
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator): Validator
+    {
+        $validator
+            ->scalar('name')
+            ->maxLength('name', 200)
+            ->requirePresence('name', 'create')
+            ->notEmptyString('name');
 
-    return $validator;
-  }
+        return $validator;
+    }
 }
